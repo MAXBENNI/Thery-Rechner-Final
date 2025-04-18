@@ -1,0 +1,692 @@
+<!DOCTYPE html><script src="/__replco/static/devtools/eruda/3.2.3/eruda.js"></script><script src="/__replco/static/devtools/injected.js"onerror="parent.postMessage({event:'error',payload:'script.onerror: Failed to load '+event.target.src},'https://replit.com')"></script>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THERY Proteinrechner</title>
+  <style>
+    /* Base styles */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+      background: #f7f9fc;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3 {
+      text-align: center;
+      color: #2c3e50;
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      position: relative;
+      padding-bottom: 10px;
+    }
+
+    h1:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background-color: #007bff;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      margin-top: 2rem;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+    }
+
+    /* Form elements */
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 15px;
+      color: #2c3e50;
+    }
+
+    input, button, select, textarea {
+      padding: 12px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1em;
+      box-sizing: border-box;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s;
+      font-weight: 600;
+      box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
+    }
+
+    button:hover {
+      background-color: #0056b3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 86, 179, 0.3);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    /* Results and containers */
+    .result {
+      background-color: #fff;
+      margin-top: 20px;
+      padding: 20px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      transition: box-shadow 0.3s ease;
+    }
+
+    .result:hover {
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .card-header {
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #007bff;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+
+    /* Lists */
+    ul {
+      padding-left: 20px;
+      margin-top: 10px;
+    }
+
+    li {
+      margin-bottom: 8px;
+      position: relative;
+    }
+
+    /* Messages and info */
+    .warning {
+      color: #e74c3c;
+      font-weight: 500;
+    }
+
+    .info {
+      font-size: 0.9em;
+      color: #444;
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #007bff;
+    }
+
+    .disclaimer {
+      font-size: 0.9em;
+      color: #666;
+      margin-top: 40px;
+      text-align: center;
+      padding: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      body {
+        padding: 15px;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+      }
+      
+      .result {
+        padding: 15px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      
+      input, button, select {
+        padding: 10px;
+      }
+      
+      h1 {
+        font-size: 1.6rem;
+      }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result, .info, .disclaimer {
+      animation: fadeIn 0.5s ease;
+    }
+
+    /* Brand colors and accents */
+    .brand-highlight {
+      color: #007bff;
+      font-weight: 600;
+    }
+
+    .progress-container {
+      margin: 15px 0;
+      background-color: #f1f1f1;
+      border-radius: 20px;
+      height: 15px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background-color: #007bff;
+      border-radius: 20px;
+      transition: width 0.5s ease;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      background-color: #f8f9fa;
+      color: #007bff;
+      border-radius: 15px;
+      font-size: 0.8em;
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+
+    /* Clear button for food list */
+    .clear-btn {
+      background-color: #e74c3c;
+      margin-top: 10px;
+    }
+
+    .clear-btn:hover {
+      background-color: #c0392b;
+    }
+
+    .food-list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .food-list-header button {
+      width: auto;
+      padding: 5px 10px;
+    }
+
+    .remove-item {
+      width: auto !important;
+      padding: 2px 8px !important;
+      margin-left: 10px !important;
+      background-color: #e74c3c;
+    }
+
+    .remove-item:hover {
+      background-color: #c0392b;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .calculator-section, .food-section {
+      margin-bottom: 30px;
+    }
+
+    .nutrient-analysis {
+      margin-top: 15px;
+    }
+
+    .nutrient-item {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo-container">
+      <img src="data:image/png;base64,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" alt="THERY Logo" class="logo">
+    </div>
+    <h1>THERY Proteinrechner</h1>
+    
+    <div class="result info">
+      <p>Mit diesem Rechner kannst du dein individuelles Proteinziel bestimmen und überprüfen, ob du es mit deiner aktuellen Ernährung erreichst.</p>
+    </div>
+    
+    <section class="calculator-section">
+      <h2>Deine Körperdaten</h2>
+      
+      <div class="form-group">
+        <label for="gewicht">Körpergewicht (kg):</label>
+        <input type="number" id="gewicht" placeholder="z. B. 68" min="30" max="250">
+      </div>
+      
+      <div class="form-group">
+        <label for="groesse">Körpergröße (cm):</label>
+        <input type="number" id="groesse" placeholder="z. B. 175" min="100" max="250">
+      </div>
+      
+      <button id="berechnen-btn">Idealgewicht & Proteinziel berechnen</button>
+      
+      <div class="result" id="berechnung"></div>
+    </section>
+    
+    <section class="food-section">
+      <h2>Gegessene Lebensmittel</h2>
+      
+      <div class="form-group">
+        <label for="lebensmittelAuswahl">Lebensmittel auswählen:</label>
+        <select id="lebensmittelAuswahl">
+          <optgroup label="Fleisch & Eier">
+            <option value="Rindfleisch">Rindfleisch</option>
+            <option value="Hähnchenbrust">Hähnchenbrust</option>
+            <option value="Putenbrust">Putenbrust</option>
+            <option value="Hackfleisch">Hackfleisch</option>
+            <option value="Bratwurst">Bratwurst</option>
+            <option value="Ei">Ei</option>
+            <option value="Frühstücksei">Frühstücksei</option>
+          </optgroup>
+          <optgroup label="Fisch & Meeresfrüchte">
+            <option value="Lachs">Lachs</option>
+            <option value="Räucherlachs">Räucherlachs</option>
+            <option value="Thunfisch">Thunfisch</option>
+            <option value="Forelle">Forelle</option>
+            <option value="Sardinen">Sardinen</option>
+            <option value="Makrele">Makrele</option>
+            <option value="Garnelen">Garnelen</option>
+          </optgroup>
+          <optgroup label="Milch & Milchprodukte">
+            <option value="Milch">Milch</option>
+            <option value="Joghurt">Joghurt</option>
+            <option value="Magerquark">Magerquark</option>
+            <option value="Skyr">Skyr</option>
+            <option value="Käse">Käse</option>
+            <option value="Harzer Käse">Harzer Käse</option>
+            <option value="Parmesan">Parmesan</option>
+            <option value="Mozzarella">Mozzarella</option>
+            <option value="Frischkäse">Frischkäse</option>
+            <option value="Camembert">Camembert</option>
+            <option value="Fetakäse">Fetakäse</option>
+            <option value="Kefir">Kefir</option>
+            <option value="Buttermilch">Buttermilch</option>
+          </optgroup>
+          <optgroup label="Pflanzliche Drinks">
+            <option value="Sojamilch">Sojamilch</option>
+            <option value="Hafermilch">Hafermilch</option>
+          </optgroup>
+          <optgroup label="Pflanzenproteine">
+            <option value="Tofu">Tofu</option>
+            <option value="Tempeh">Tempeh</option>
+            <option value="Seitan">Seitan</option>
+            <option value="Edamame">Edamame</option>
+            <option value="Linsen">Linsen</option>
+            <option value="Kichererbsen">Kichererbsen</option>
+            <option value="Kidneybohnen">Kidneybohnen</option>
+          </optgroup>
+          <optgroup label="Getreide & Nüsse">
+            <option value="Haferflocken">Haferflocken</option>
+            <option value="Vollkornbrot">Vollkornbrot</option>
+            <option value="Müsli">Müsli</option>
+            <option value="Porridge">Porridge</option>
+            <option value="Quinoa">Quinoa</option>
+            <option value="Reis">Reis</option>
+            <option value="Couscous">Couscous</option>
+            <option value="Bulgur">Bulgur</option>
+            <option value="Hirse">Hirse</option>
+            <option value="Mandeln">Mandeln</option>
+            <option value="Walnüsse">Walnüsse</option>
+          </optgroup>
+          <optgroup label="Gemüse">
+            <option value="Brokkoli">Brokkoli</option>
+            <option value="Spinat">Spinat</option>
+            <option value="Grüne Erbsen">Grüne Erbsen</option>
+            <option value="Rosenkohl">Rosenkohl</option>
+            <option value="Blumenkohl">Blumenkohl</option>
+            <option value="Zucchini">Zucchini</option>
+            <option value="Paprika">Paprika</option>
+            <option value="Tomaten">Tomaten</option>
+            <option value="Avocado">Avocado</option>
+            <option value="Kartoffeln">Kartoffeln</option>
+            <option value="Süßkartoffeln">Süßkartoffeln</option>
+          </optgroup>
+          <optgroup label="Sonstiges">
+            <option value="Whey Shake">Whey Shake</option>
+          </optgroup>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="menge">Menge (g):</label>
+        <input type="number" id="menge" placeholder="z. B. 100" min="1">
+      </div>
+      
+      <button id="hinzufuegen-btn">Lebensmittel hinzufügen</button>
+      
+      <div class="result">
+        <div class="food-list-header">
+          <h3>Ausgewählte Lebensmittel:</h3>
+          <button id="clear-btn" class="clear-btn">Liste leeren</button>
+        </div>
+        <ul id="lebensmittelListe"></ul>
+      </div>
+      
+      <button id="defizit-btn">Proteinaufnahme & THERY-Portion berechnen</button>
+      
+      <div class="result" id="defizit"></div>
+    </section>
+    
+    <div class="info">
+      <p><strong>Info:</strong> Kohlenhydrate liefern deinem Körper Energie für körperliche und geistige Leistungen – besonders wichtig vor und nach dem Training. Ballaststoffe unterstützen eine gesunde Verdauung und ein langanhaltendes Sättigungsgefühl. Achte darauf, täglich ausreichend davon zu dir zu nehmen, z. B. durch Vollkornprodukte, Hülsenfrüchte, Obst und Gemüse.</p>
+    </div>
+    
+    <p class="disclaimer">
+      Hinweis: THERY ist kein Ersatz für eine ausgewogene Ernährung, sondern soll gezielt dabei unterstützen, den individuellen Proteinbedarf zu decken. Die berechneten Werte dienen der groben Orientierung und ersetzen keine professionelle Ernährungsberatung.
+    </p>
+  </div>
+  
+  <script>
+    // Global variables
+    let proteinZiel = 0;
+    let lebensmittelDaten = [];
+
+    // Protein values for different foods (g of protein per g of food)
+    const proteinWerte = {
+      "Harzer Käse": (menge) => menge * 0.30,
+      "Bratwurst": (menge) => menge * 0.15,
+      "Hackfleisch": (menge) => menge * 0.22,
+      "Räucherlachs": (menge) => menge * 0.21,
+      "Sardinen": (menge) => menge * 0.25,
+      "Makrele": (menge) => menge * 0.22,
+      "Garnelen": (menge) => menge * 0.24,
+      "Forelle": (menge) => menge * 0.20,
+      "Frühstücksei": (menge) => menge * 0.13,
+      "Sojamilch": (menge) => menge * 0.033,
+      "Hafermilch": (menge) => menge * 0.01,
+      "Kefir": (menge) => menge * 0.034,
+      "Buttermilch": (menge) => menge * 0.033,
+      "Grüne Erbsen": (menge) => menge * 0.05,
+      "Brokkoli": (menge) => menge * 0.028,
+      "Spinat": (menge) => menge * 0.029,
+      "Rosenkohl": (menge) => menge * 0.04,
+      "Blumenkohl": (menge) => menge * 0.02,
+      "Zucchini": (menge) => menge * 0.012,
+      "Paprika": (menge) => menge * 0.013,
+      "Tomaten": (menge) => menge * 0.009,
+      "Avocado": (menge) => menge * 0.02,
+      "Kartoffeln": (menge) => menge * 0.02,
+      "Süßkartoffeln": (menge) => menge * 0.016,
+      "Couscous": (menge) => menge * 0.038,
+      "Bulgur": (menge) => menge * 0.035,
+      "Hirse": (menge) => menge * 0.035,
+      "Reis": (menge) => menge * 0.027,
+      "Müsli": (menge) => menge * 0.09,
+      "Porridge": (menge) => menge * 0.045,
+      "Rindfleisch": (menge) => menge * 0.26,
+      "Tempeh": (menge) => menge * 0.19,
+      "Parmesan": (menge) => menge * 0.35,
+      "Seitan": (menge) => menge * 0.25,
+      "Skyr": (menge) => menge * 0.11,
+      "Ei": (menge) => menge * 7,
+      "Hähnchenbrust": (menge) => menge * 0.23,
+      "Lachs": (menge) => menge * 0.20,
+      "Tofu": (menge) => menge * 0.12,
+      "Linsen": (menge) => menge * 0.09,
+      "Haferflocken": (menge) => menge * 0.13,
+      "Magerquark": (menge) => menge * 0.12,
+      "Joghurt": (menge) => menge * 0.04,
+      "Milch": (menge) => menge * 0.034,
+      "Käse": (menge) => menge * 0.25,
+      "Whey Shake": (menge) => menge * 0.8,
+      "Thunfisch": (menge) => menge * 0.26,
+      "Putenbrust": (menge) => menge * 0.24,
+      "Kichererbsen": (menge) => menge * 0.089,
+      "Kidneybohnen": (menge) => menge * 0.084,
+      "Mozzarella": (menge) => menge * 0.18,
+      "Edamame": (menge) => menge * 0.11,
+      "Mandeln": (menge) => menge * 0.21,
+      "Walnüsse": (menge) => menge * 0.15,
+      "Frischkäse": (menge) => menge * 0.08,
+      "Camembert": (menge) => menge * 0.20,
+      "Fetakäse": (menge) => menge * 0.17,
+      "Vollkornbrot": (menge) => menge * 0.08,
+      "Quinoa": (menge) => menge * 0.044
+    };
+
+    // Calculate ideal weight and protein target
+    function berechneIdealgewicht() {
+      const gewicht = parseFloat(document.getElementById('gewicht').value);
+      const groesseCm = parseFloat(document.getElementById('groesse').value);
+      
+      if (!gewicht || !groesseCm) {
+        showError("Bitte alle Felder ausfüllen.");
+        return;
+      }
+      
+      const groesseM = groesseCm / 100;
+      const idealgewicht = 22 * groesseM * groesseM;
+      proteinZiel = idealgewicht * 1.2;
+      
+      const berechnungDiv = document.getElementById('berechnung');
+      berechnungDiv.innerHTML = `
+        <div class="card-header">Deine Berechnungsergebnisse</div>
+        <p>Idealgewicht: <span class="brand-highlight">${idealgewicht.toFixed(1)} kg</span></p>
+        <p>Proteinziel: <span class="brand-highlight">${proteinZiel.toFixed(1)} g</span> pro Tag</p>
+        <div class="info">
+          <p><strong>Gut zu wissen:</strong> Der tägliche Proteinbedarf variiert je nach Aktivitätsniveau und Zielen. 
+          Für Kraftsportler und sehr aktive Personen kann ein höherer Wert sinnvoll sein.</p>
+        </div>
+      `;
+      
+      updateDefizitBerechnung();
+    }
+
+    // Add food item to the list
+    function hinzufuegenLebensmittel() {
+      const auswahl = document.getElementById('lebensmittelAuswahl').value;
+      const menge = parseFloat(document.getElementById('menge').value);
+      
+      if (!menge || !proteinWerte[auswahl]) {
+        showError("Bitte eine gültige Menge und ein Lebensmittel auswählen.");
+        return;
+      }
+      
+      const protein = proteinWerte[auswahl](menge);
+      lebensmittelDaten.push({ name: auswahl, menge, protein });
+      
+      const liste = document.getElementById('lebensmittelListe');
+      const eintrag = document.createElement('li');
+      eintrag.innerHTML = `${auswahl}, ${menge}g = <span class="brand-highlight">${protein.toFixed(1)} g Protein</span>
+                          <button class="remove-item" onclick="removeItem(${lebensmittelDaten.length - 1})" 
+                          style="width: auto; padding: 2px 8px; margin-left: 10px;">✕</button>`;
+      liste.appendChild(eintrag);
+      
+      // Clear input field
+      document.getElementById('menge').value = '';
+      
+      updateDefizitBerechnung();
+    }
+
+    // Remove food item from list
+    function removeItem(index) {
+      lebensmittelDaten.splice(index, 1);
+      refreshFoodList();
+      updateDefizitBerechnung();
+    }
+
+    // Refresh the food list display
+    function refreshFoodList() {
+      const liste = document.getElementById('lebensmittelListe');
+      liste.innerHTML = '';
+      
+      lebensmittelDaten.forEach((item, index) => {
+        const eintrag = document.createElement('li');
+        eintrag.innerHTML = `${item.name}, ${item.menge}g = <span class="brand-highlight">${item.protein.toFixed(1)} g Protein</span>
+                            <button class="remove-item" onclick="removeItem(${index})" 
+                            style="width: auto; padding: 2px 8px; margin-left: 10px;">✕</button>`;
+        liste.appendChild(eintrag);
+      });
+    }
+
+    // Clear all food items
+    function clearFoodList() {
+      lebensmittelDaten = [];
+      refreshFoodList();
+      updateDefizitBerechnung();
+    }
+
+    // Calculate protein deficit and THERY portion
+    function berechneDefizit() {
+      if (proteinZiel <= 0) {
+        showError("Bitte zuerst das Idealgewicht berechnen.");
+        return;
+      }
+      
+      updateDefizitBerechnung();
+    }
+
+    function updateDefizitBerechnung() {
+      if (proteinZiel <= 0) return;
+      
+      const summeProtein = lebensmittelDaten.reduce((sum, item) => sum + item.protein, 0);
+      const defizit = proteinZiel - summeProtein;
+      const portionen = defizit > 0 ? defizit / 20 : 0;
+      const portionInGramm = portionen * 30;
+      
+      const progressPercentage = Math.min((summeProtein / proteinZiel) * 100, 100);
+      
+      const defizitDiv = document.getElementById('defizit');
+      defizitDiv.innerHTML = `
+        <div class="card-header">Protein-Tracking</div>
+        <p>Tagesbedarf: <span class="brand-highlight">${proteinZiel.toFixed(1)} g</span></p>
+        <p>Aufgenommenes Protein: <span class="brand-highlight">${summeProtein.toFixed(1)} g</span></p>
+        
+        <div class="progress-container">
+          <div class="progress-bar" style="width: ${progressPercentage}%"></div>
+        </div>
+        
+        <p>Fehlmenge: <span class="brand-highlight">${defizit > 0 ? defizit.toFixed(1) : 0} g</span></p>
+        <p>Empfohlene THERY-Menge: <span class="brand-highlight">${portionInGramm.toFixed(1)} g Pulver</span></p>
+        <div style="margin-top: 15px;">
+          ${bewertungWeitereNaehrstoffe()}
+        </div>
+      `;
+    }
+
+    // Evaluate other nutrients
+    function bewertungWeitereNaehrstoffe() {
+      const ballaststoffEmpfehlung = 30;
+      const kohlenhydratEmpfehlung = 300;
+      
+      let ballaststoffe = 0;
+      let kohlenhydrate = 0;
+      
+      lebensmittelDaten.forEach(item => {
+        const name = item.name.toLowerCase();
+        const menge = item.menge;
+        
+        if (name.includes("vollkorn") || name.includes("linsen") || 
+            name.includes("bohnen") || name.includes("kichererbsen") || 
+            name.includes("hafer") || name.includes("mandel") || 
+            name.includes("walnuss") || name.includes("quinoa") || 
+            name.includes("bulgur") || name.includes("brot")) {
+          ballaststoffe += menge * 0.08;
+        }
+        
+        if (name.includes("reis") || name.includes("kartoffel") || 
+            name.includes("süßkartoffel") || name.includes("müsli") || 
+            name.includes("brot") || name.includes("milchreis") || 
+            name.includes("porridge") || name.includes("couscous") || 
+            name.includes("quinoa") || name.includes("bulgur")) {
+          kohlenhydrate += menge * 0.20;
+        }
+      });
+      
+      let html = '<div class="nutrient-analysis">';
+      
+      // Fiber analysis
+      html += '<div class="nutrient-item">';
+      if (ballaststoffe < ballaststoffEmpfehlung) {
+        html += `<p class="warning">⚠️ Dein Ballaststoffanteil liegt bei <span class="brand-highlight">${ballaststoffe.toFixed(1)} g</span> – das ist unter dem empfohlenen Tageswert von ${ballaststoffEmpfehlung} g.</p>`;
+      } else {
+        html += `<p>✅ Ballaststoffe: <span class="brand-highlight">${ballaststoffe.toFixed(1)} g</span> – Ausreichend!</p>`;
+      }
+      html += '</div>';
+      
+      // Carbohydrate analysis
+      html += '<div class="nutrient-item">';
+      if (kohlenhydrate < kohlenhydratEmpfehlung) {
+        html += `<p class="warning">⚠️ Deine Kohlenhydratzufuhr liegt bei <span class="brand-highlight">${kohlenhydrate.toFixed(1)} g</span> – empfohlen wären ca. ${kohlenhydratEmpfehlung} g täglich.</p>`;
+      } else {
+        html += `<p>✅ Kohlenhydrate: <span class="brand-highlight">${kohlenhydrate.toFixed(1)} g</span> – Ausreichend!</p>`;
+      }
+      html += '</div>';
+      
+      html += '</div>';
+      
+      return html;
+    }
+
+    // Show error message
+    function showError(message) {
+      alert(message);
+    }
+
+    // Initialize event listeners when the DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add event listeners for buttons
+      document.getElementById('berechnen-btn').addEventListener('click', berechneIdealgewicht);
+      document.getElementById('hinzufuegen-btn').addEventListener('click', hinzufuegenLebensmittel);
+      document.getElementById('defizit-btn').addEventListener('click', berechneDefizit);
+      document.getElementById('clear-btn').addEventListener('click', clearFoodList);
+      
+      // Add Enter key event for food quantity input
+      document.getElementById('menge').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          hinzufuegenLebensmittel();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
